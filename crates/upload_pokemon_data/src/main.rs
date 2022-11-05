@@ -1,0 +1,13 @@
+mod db;
+mod pokemon_csv;
+use db::*;
+use pokemon_csv::*;
+
+fn main() -> Result<(), csv::Error> {
+    let mut rdr = csv::Reader::from_path("./crates/upload_pokemon_data/pokemon.csv")?;
+    for result in rdr.deserialize() {
+        let record: PokemonCsv = result?;
+        println!("{:?}", record)
+    }
+    Ok(())
+}
