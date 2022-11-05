@@ -5,7 +5,7 @@ use std::fmt;
 
 use crate::pokemon_csv::PokemonCsv;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PokemonTableRow {
     pub id: PokemonId,
     pub name: String,
@@ -54,6 +54,7 @@ pub struct PokemonTableRow {
     pub fairy_attack_effectiveness: f32,
 }
 
+#[derive(Clone)]
 pub struct PokemonId(Ksuid);
 
 impl PokemonId {
@@ -183,7 +184,7 @@ impl From<PokemonCsv> for PokemonTableRow {
 }
 
 pub async fn insert_pokemon(
-    pool: &MySqlPool,
+    pool: MySqlPool,
     PokemonTableRow {
         id,
         slug,
@@ -226,7 +227,7 @@ pub async fn insert_pokemon(
         dark_attack_effectiveness,
         steel_attack_effectiveness,
         fairy_attack_effectiveness,
-    }: &PokemonTableRow,
+    }: PokemonTableRow,
 ) -> Result<sqlx::mysql::MySqlQueryResult, sqlx::Error> {
     sqlx::query!(
         r#"
@@ -317,6 +318,6 @@ pub async fn insert_pokemon(
         steel_attack_effectiveness,
         fairy_attack_effectiveness,
     )
-    .execute(pool)
+    .execute(&pool)
     .await
 }
